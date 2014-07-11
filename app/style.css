@@ -1,0 +1,18 @@
+div#content {
+  position: absolute;
+  height: 90%;
+  width: 90%;
+  border: 1px solid;
+  border-radius: 5px;
+  top: 5%; right: 0; bottom: 0; left: 0;
+  margin: auto;
+}
+
+div#map {
+  height: 100%;
+  map: 100%;
+}
+
+path {
+  fill: #ff7800;
+}
