@@ -16,3 +16,9 @@ div#map {
 path {
   fill: #ff7800;
 }
+
+.dropdown-menu {
+  height: auto;
+  max-height: 400px;
+  overflow-x: hidden;
+}
