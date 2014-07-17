@@ -36,8 +36,8 @@
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
 
               <li>
-                <a href="#" ng-repeat="(title,tag) in model.routes">
-                  {{title}}: {{ tag }}
+                <a href="#" ng-click="activate(tag)" ng-repeat="(tag,route) in model.routes">
+                  {{tag}}: {{route.title}}
                 </a>
               </li>
 

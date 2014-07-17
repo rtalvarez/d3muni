@@ -1,10 +1,18 @@
 angular.module("d3App", [])
 
-.controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', function($scope, getAssets, makeMap, getRouteList) {
+.controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', 'APIUrls', function($scope, getAssets, makeMap, getRouteList, APIUrls) {
 
   var mapData;
   $scope.model = {};
   window.model = $scope.model;
+  var routeListUrl = APIUrls.routeList;
+
+  $scope.activate = function(tag) {
+    console.log(tag);
+    $scope.model.routes[tag].visible = !$scope.model.routes[tag].visible;
+  };
+
+
   getAssets()
   .then(function(result) {
     var map = makeMap();
@@ -17,7 +25,7 @@ angular.module("d3App", [])
   });
 
 
-  getRouteList()
+  getRouteList(routeListUrl)
   .then(function(data) {
     var nodes = $(data).find('route');
     var title;
@@ -31,13 +39,24 @@ angular.module("d3App", [])
       title = $node.attr('title');
       routeTag = $node.attr('tag');
 
-      $scope.model.routes[routeTag] = title;
+      $scope.model.routes[routeTag] = {
+        title: title,
+        visible: false
+      };
 
     });
 
   });
 
 }])
+
+.factory('APIUrls', function() {
+
+  return {
+    routeList: 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni'
+  };
+
+})
 
 .factory('loadJSON', ['$q','$http', function($q, $http) {
 
@@ -118,8 +137,8 @@ angular.module("d3App", [])
 
 .factory('getRouteList', ['$q', function($q) {
 
-  return function() {
-    var url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
+  return function(url) {
+    
     var deferred = $q.defer();
 
     $.ajax({
