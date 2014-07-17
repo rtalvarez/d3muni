@@ -1,8 +1,10 @@
 angular.module("d3App", [])
 
-.controller('mainCtrl', ['getAssets', 'makeMap', 'getRouteList', function(getAssets, makeMap, getRouteList) {
+.controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', function($scope, getAssets, makeMap, getRouteList) {
 
   var mapData;
+  $scope.model = {};
+  window.model = $scope.model;
   getAssets()
   .then(function(result) {
     var map = makeMap();
@@ -15,7 +17,36 @@ angular.module("d3App", [])
   });
 
 
-  getRouteList();
+  getRouteList()
+  .then(function(data) {
+    var nodes = $(data).find('route');
+    var title;
+    var routeTag;
+
+    $scope.model.routes = $scope.model.routes || {};
+
+    nodes.each(function(index, node) {
+      console.log($(node).attr);
+      var $node = $(node);
+      title = $node.attr('title');
+      routeTag = $node.attr('tag');
+
+      $scope.model.routes[routeTag] = title;
+
+    });
+
+    // $scope.model = $scope.model || {};
+    // $scope.model.routes = $scope.model.routes || {};
+    
+    // for (var i = 0; i < nodes.length; i++) {
+      // console.log(nodes[i].attr('title'));
+      // title = nodes[i].attr('title');
+      // routeTag = nodes[i].attr('tag');
+      // console.log('title', title);
+      // $scope.model.routes[routeTag] = title;    
+    // }
+
+  });
 
 }])
 
@@ -96,10 +127,11 @@ angular.module("d3App", [])
 
 }])
 
-.factory('getRouteList', [function() {
+.factory('getRouteList', ['$q', function($q) {
 
   return function() {
     var url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
+    var deferred = $q.defer();
 
     $.ajax({
       method: 'GET',
@@ -107,8 +139,50 @@ angular.module("d3App", [])
     })
     .then(function(data) {
       console.log(data);
+      window.data = data;
+      deferred.resolve(data);
+
+
+
     });
+
+    return deferred.promise;
   };
 
 }]);
+
+// .factory('getRouteList', ['$scope', function($scope) {
+
+//   return function() {
+//     var url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni';
+
+//     $.ajax({
+//       method: 'GET',
+//       url: url
+//     })
+//     .then(function(data) {
+//       console.log(data);
+//       window.data = data;
+//       var nodes = $(data).find('route');
+//       var routeObj;
+//       var title;
+//       var routeTag;
+
+//       $scope.model.routes = $scope.model.routes || {};
+//       // $scope.model.routeNames = $scope.model.routeNames || [];
+
+//       for (var i = 0; i < nodes.length; i++) {
+//         title = nodes[i].attr('title');
+//         routeTag = nodes[i].attr('tag');
+//         // routeObj = {};
+//         // routeObj[routeTag] = title;
+//         $scope.model.routes[routeTag] = title;
+//         // $scope.model.routeTags.push(nodes[i].attr('tag'));
+//         // $scope.model.routeNames.push(nodes[i].attr('title'));        
+//       }
+
+//     });
+//   };
+
+// }]);
 
