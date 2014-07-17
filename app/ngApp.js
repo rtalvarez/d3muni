@@ -1,4 +1,5 @@
-angular.module("d3App", [])
+angular.module("d3App", ['map'])
+
 
 .controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', 'APIUrls', function($scope, getAssets, makeMap, getRouteList, APIUrls) {
 
@@ -34,7 +35,6 @@ angular.module("d3App", [])
     $scope.model.routes = $scope.model.routes || {};
 
     nodes.each(function(index, node) {
-      console.log($(node).attr);
       var $node = $(node);
       title = $node.attr('title');
       routeTag = $node.attr('tag');
@@ -158,6 +158,9 @@ angular.module("d3App", [])
   };
 
 }]);
+
+
+
 
 
 
