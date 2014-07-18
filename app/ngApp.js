@@ -1,4 +1,4 @@
-angular.module("d3App", ['map'])
+angular.module("d3App", ['map', 'api', 'assets'])
 
 
 .controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', 'APIUrls', function($scope, getAssets, makeMap, getRouteList, APIUrls) {
@@ -11,6 +11,7 @@ angular.module("d3App", ['map'])
   $scope.activate = function(tag) {
     console.log(tag);
     $scope.model.routes[tag].visible = !$scope.model.routes[tag].visible;
+    $scope.$broadcast('visibleChange', $scope.model.routes[tag]);
   };
 
 
@@ -19,6 +20,7 @@ angular.module("d3App", ['map'])
     var map = makeMap();
     mapData = result;
     var dataLayer = L.geoJson().addTo(map);
+    // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
     dataLayer.addData(mapData.streets);
     // for (var key in mapData) {
     //   dataLayer.addData(mapData[key]);
@@ -46,118 +48,16 @@ angular.module("d3App", ['map'])
 
     });
 
+    $scope.$broadcast('initReady', $scope.model);
+
   });
 
 }])
 
-.factory('APIUrls', function() {
-
-  return {
-    routeList: 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=sf-muni'
-  };
-
-})
-
-.factory('loadJSON', ['$q','$http', function($q, $http) {
-
-  return function(asset) {
-    var deferred = $q.defer();
-    $http.get(asset)
-    .success(function(mapData) {
-      deferred.resolve(mapData);
-    });
-    return deferred.promise;
-  };
-
-}])
-
-.factory('getAssets', ['$q','loadJSON', function($q, loadJSON) {
-
-
-  return function() {
-    var assets = {};
-    var deferred = $q.defer();
-    var completePath;
-    var rootPath = '../sfmaps/';
-
-    var names = [
-      'arteries',
-      'streets',
-      'neighborhoods',
-      'freeways'
-    ];
-
-    var assetCount = 0;
-
-    var loopable = function(i) {
-      completePath = rootPath + names[i] + '.json';
-      loadJSON(completePath)
-      .then(function(result) {
-        assetCount++;
-        assets[names[i]] = result;
-        if (assetCount === names.length) {
-          return deferred.resolve(assets);
-        } 
-      });
-    };
-
-    for (var i = 0; i < names.length; i++) {
-      loopable(i);
-    }
-
-    return deferred.promise;
-  };
-
-}])
-
-.factory('makeMap', [function() {
-
-  return function() {
-    var map = L.map('map', {
-      center: [37.784875, -122.406643],
-      zoom: 13,
-      touchZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      scrollWheelZoom: false
-    });
-
-    // L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-    //     maxZoom: 18,
-    //     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    //       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    //       'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    //     id: 'examples.map-20v6611k'
-    //   }).addTo(map);
-
-    return map;
-  };
-
-}])
-
-.factory('getRouteList', ['$q', function($q) {
-
-  return function(url) {
-    
-    var deferred = $q.defer();
-
-    $.ajax({
-      method: 'GET',
-      url: url
-    })
-    .then(function(data) {
-      console.log(data);
-      window.data = data;
-      deferred.resolve(data);
 
 
 
-    });
 
-    return deferred.promise;
-  };
-
-}]);
 
 
 
