@@ -73,6 +73,27 @@ angular.module('api', [])
     scope.$broadcast('initReady', scope.model);
   };
 
+}])
+
+.factory('parseLocations', [function() {
+
+  return function(xml) {
+    var locations = [];
+    var nodes = $(xml).find('vehicle');
+    var lat;
+    var lon;
+
+    nodes.each(function(index, node) {
+      var $node = $(node);
+      lat = $node.attr('lat');
+      lon = $node.attr('lon');
+      locations.push([lat, lon]);
+    });
+
+    console.log(locations[0]);
+    return locations;
+  };
+
 }]);
 
 
