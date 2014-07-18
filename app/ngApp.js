@@ -1,7 +1,7 @@
 angular.module("d3App", ['map', 'api', 'assets'])
 
 
-.controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'getRouteList', 'APIUrls', function($scope, getAssets, makeMap, getRouteList, APIUrls) {
+.controller('mainCtrl', ['$scope', 'getAssets', 'makeMap', 'queryAPI', 'APIUrls', 'saveRoutes', function($scope, getAssets, makeMap, queryAPI, APIUrls, saveRoutes) {
 
   var mapData;
   $scope.model = {};
@@ -11,7 +11,9 @@ angular.module("d3App", ['map', 'api', 'assets'])
   $scope.activate = function(tag) {
     console.log(tag);
     $scope.model.routes[tag].visible = !$scope.model.routes[tag].visible;
-    $scope.$broadcast('visibleChange', $scope.model.routes[tag]);
+    if ($scope.model.routes[tag].visible) {
+      $scope.$broadcast('enableRoute', $scope.model.routes[tag]);
+    }
   };
 
 
@@ -27,32 +29,12 @@ angular.module("d3App", ['map', 'api', 'assets'])
     // }
   });
 
-
-  getRouteList(routeListUrl)
+  queryAPI(routeListUrl)
   .then(function(data) {
-    var nodes = $(data).find('route');
-    var title;
-    var routeTag;
-
-    $scope.model.routes = $scope.model.routes || {};
-
-    nodes.each(function(index, node) {
-      var $node = $(node);
-      title = $node.attr('title');
-      routeTag = $node.attr('tag');
-
-      $scope.model.routes[routeTag] = {
-        title: title,
-        visible: false
-      };
-
-    });
-
-    $scope.$broadcast('initReady', $scope.model);
-
+    saveRoutes(data, $scope);
   });
 
-}])
+}]);
 
 
 

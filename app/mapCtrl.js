@@ -1,13 +1,19 @@
-angular.module('map', [])
+angular.module('map', ['api'])
 
-.controller('mapCtrl', ['$scope', function($scope) {
+.controller('mapCtrl', ['$scope', 'getLocations', function($scope, getLocations) {
 
   $scope.$on('initReady', function(other, data) {
     console.log(data.routes);
+    
   });
 
-  $scope.$on('visibleChange', function(other, route) {
-     console.log(route);
+  $scope.$on('enableRoute', function(other, route) {
+    console.log(route);
+    getLocations(route.routeTag)
+    .then(function(data) {
+      console.log(data);
+    });
+
   });
 
 }])
