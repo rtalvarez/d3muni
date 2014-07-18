@@ -1,6 +1,6 @@
-angular.module('map', ['api'])
+angular.module('map', ['api', 'd3'])
 
-.controller('mapCtrl', ['$scope', 'getLocations', 'parseLocations', 'makeMap', 'putCircle', function($scope, getLocations, parseLocations, makeMap, putCircle) {
+.controller('mapCtrl', ['$scope', 'getLocations', 'parseLocations', 'makeMap', 'putCircles', 'deleteCircles', function($scope, getLocations, parseLocations, makeMap, putCircles, deleteCircles) {
 
   $scope.$on('initReady', function(other, data) {
     console.log(data.routes);
@@ -24,14 +24,14 @@ angular.module('map', ['api'])
 
       });
       console.log(locations);
-      putCircle(locations);
+      putCircles(locations, route.routeTag);
       // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
-
-
     });
-
   });
 
+  $scope.$on('disableRoute', function(other, route) {
+    deleteCircles(route.routeTag);
+  });
 }])
 
 
@@ -73,45 +73,5 @@ angular.module('map', ['api'])
 
 }])
 
-.directive('circle', [function() {
 
-  var link = function(scope, element, attr) {
-
-    d3.select('svg')
-    .append('g')
-    .attr('class', 'node')
-    .selectAll('circle')
-    .data(scope.data)
-    .enter().append('circle')
-    .attr('r', 2)
-    .attr('cx', function(d, i) { return d[0]; })
-    .attr('cy', function(d, i) { return d[1]; })
-    .attr('fill', 'red');
-
-  };
-
-  return {
-    link: link,
-    restrict: 'E',
-    scope: { data: '=' }
-  };
-
-}])
-
-.factory('putCircle', [function() {
-
-  return function(data) {
-    d3.select('svg')
-    .append('g')
-    .attr('class', 'node')
-    .selectAll('circle')
-    .data(data)
-    .enter().append('circle')
-    .attr('r', 2)
-    .attr('cx', function(d, i) { return d[0]; })
-    .attr('cy', function(d, i) { return d[1]; })
-    .attr('fill', 'red');
-  }
-
-}])
 

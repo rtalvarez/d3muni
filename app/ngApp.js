@@ -13,6 +13,8 @@ angular.module("d3App", ['map', 'api', 'assets'])
     $scope.model.routes[tag].visible = !$scope.model.routes[tag].visible;
     if ($scope.model.routes[tag].visible) {
       $scope.$broadcast('enableRoute', $scope.model.routes[tag]);
+    } else {
+      $scope.$broadcast('disableRoute', $scope.model.routes[tag]);
     }
   };
 
@@ -22,7 +24,6 @@ angular.module("d3App", ['map', 'api', 'assets'])
     var map = makeMap();
     mapData = result;
     var dataLayer = L.geoJson().addTo(map);
-    // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
     dataLayer.addData(mapData.streets);
     // for (var key in mapData) {
     //   dataLayer.addData(mapData[key]);
