@@ -2,35 +2,57 @@ angular.module('map', ['api', 'd3'])
 
 .controller('mapCtrl', ['$scope', 'getLocations', 'parseLocations', 'makeMap', 'putCircles', 'deleteCircles', function($scope, getLocations, parseLocations, makeMap, putCircles, deleteCircles) {
 
+  $scope.timers = {};
+
   $scope.$on('initReady', function(other, data) {
     console.log(data.routes);
     
   });
 
   $scope.$on('enableRoute', function(other, route) {
-    console.log(route);
-    getLocations(route.routeTag)
-    .then(function(data) {
-      // console.log(data);
-      var locations = parseLocations(data);
-      locations.forEach(function(item, index) {
-        var translated = map.latLngToContainerPoint({
-          lat: item[0],
-          lng: item[1]
+
+
+    var showVehicles = function() {
+      getLocations(route.routeTag)
+      .then(function(data) {
+        
+        var locations = parseLocations(data);
+        locations.forEach(function(item, index) {
+          var translated = map.latLngToContainerPoint({
+            lat: item[0],
+            lng: item[1]
+          });
+
+          locations[index][0] = translated.x;
+          locations[index][1] = translated.y;
+
         });
+        console.log(locations);
+        var color = putCircles(locations, route.routeTag);
 
-        locations[index][0] = translated.x;
-        locations[index][1] = translated.y;
-
+        $('.c' + route.routeTag).css({
+          'background-color' : color
+        });
+        // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
       });
-      console.log(locations);
-      putCircles(locations, route.routeTag);
-      // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
-    });
+    };
+
+    showVehicles();
+
+    $scope.timers[route.routeTag] = setInterval(function() {
+      deleteCircles(route.routeTag);
+      showVehicles();
+    }, 15000);
+    
+
   });
 
   $scope.$on('disableRoute', function(other, route) {
+    $('.c' + route.routeTag).css({
+      'background-color' : 'white'
+    });
     deleteCircles(route.routeTag);
+    clearInterval($scope.timers[route.routeTag]);
   });
 }])
 
@@ -44,8 +66,8 @@ angular.module('map', ['api', 'd3'])
 
     executed = true;
     map = L.map('map', {
-      center: [37.768747165902056, -122.44880676269531],
-      zoom: 14,
+      center: [37.764811863655154, -122.44863510131836],
+      zoom: 13,
       touchZoom: false,
       doubleClickZoom: false,
       boxZoom: false,
@@ -71,7 +93,9 @@ angular.module('map', ['api', 'd3'])
     return map;
   };
 
-}])
+}]);
+
+
 
 
 

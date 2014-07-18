@@ -14,7 +14,8 @@ div#map {
 }
 
 path {
-  fill: #ff7800;
+  stroke-width: 1px;
+
 }
 
 .dropdown-menu {

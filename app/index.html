@@ -6,8 +6,8 @@
     <script src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../bower_components/bootstrap/js/dropdown.js"></script>
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
+    <link rel="stylesheet" href="style.css">
     <script src="../bower_components/angular/angular.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <!-- <script src="../bower_components/underscore/underscore.js"></script> -->
@@ -42,7 +42,8 @@
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
 
               <li>
-                <a href="#" ng-click="activate(tag)" ng-repeat="(tag,route) in model.routes">
+                <a href="#" class="c{{tag}}" ng-click="activate(tag)" ng-repeat="(tag,route) in model.routes">
+                <!-- <span class="c{{tag}}">*</span> -->
                   {{tag}}: {{route.title}}
                 </a>
               </li>

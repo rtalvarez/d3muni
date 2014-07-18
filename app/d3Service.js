@@ -1,29 +1,29 @@
 angular.module('d3', [])
 
-.directive('circle', [function() {
+// .directive('circle', [function() {
 
-  var link = function(scope, element, attr) {
+//   var link = function(scope, element, attr) {
 
-    d3.select('svg')
-    .append('g')
-    .attr('class', 'node')
-    .selectAll('circle')
-    .data(scope.data)
-    .enter().append('circle')
-    .attr('r', 2)
-    .attr('cx', function(d, i) { return d[0]; })
-    .attr('cy', function(d, i) { return d[1]; })
-    .attr('fill', 'red');
+//     d3.select('svg')
+//     .append('g')
+//     .attr('class', 'node')
+//     .selectAll('circle')
+//     .data(scope.data)
+//     .enter().append('circle')
+//     .attr('r', 2)
+//     .attr('cx', function(d, i) { return d[0]; })
+//     .attr('cy', function(d, i) { return d[1]; })
+//     .attr('fill', 'red');
 
-  };
+//   };
 
-  return {
-    link: link,
-    restrict: 'E',
-    scope: { data: '=' }
-  };
+//   return {
+//     link: link,
+//     restrict: 'E',
+//     scope: { data: '=' }
+//   };
 
-}])
+// }])
 
 .factory('deleteCircles', [function() {
 
@@ -36,9 +36,11 @@ angular.module('d3', [])
 
 }])
 
-.factory('putCircles', [function() {
+.factory('putCircles', ['circleColors', function(circleColors) {
 
   return function(data, tag) {
+    var color = circleColors(tag);
+    console.log(color);
     d3.select('svg')
     .append('g')
     .attr('class', 'r' + tag)
@@ -48,10 +50,26 @@ angular.module('d3', [])
     .attr('r', 3)
     .attr('cx', function(d, i) { return d[0]; })
     .attr('cy', function(d, i) { return d[1]; })
-    .attr('fill', 'red');
+    .attr('fill', color);
+    return color;
   };
 
 }])
+
+.service('circleColors', [function() {
+
+  return function(){
+    var letters = 'ABCDEF0123456789'.split('');
+    var color = '#';
+
+    for (var i = 0; i < 6; i++){
+      color = color + letters[Math.floor(Math.random() * letters.length)];    
+    }
+
+    return color;
+ };
+
+}]);
 // .factory('d3Service', ['$q', function($q) {
 
 //   return function() {
