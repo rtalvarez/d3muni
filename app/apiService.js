@@ -22,8 +22,6 @@ angular.module('api', [])
       url: url
     })
     .then(function(data) {
-      // console.log(data);
-      window.data = data;
       deferred.resolve(data);
     });
 
@@ -39,7 +37,6 @@ angular.module('api', [])
     var url = APIUrls.locations(routeTag);
     queryAPI(url)
     .then(function(data) {
-      // console.log(data);
       deferred.resolve(data);
     });
 
@@ -96,7 +93,7 @@ angular.module('api', [])
 
 }])
 
-.service('randomColor', [function() {
+.factory('randomColor', [function() {
 
   return function(){
     var letters = 'ABCDEF0123456789'.split('');
