@@ -4,10 +4,6 @@ angular.module('map', ['api', 'd3'])
 
   $scope.timers = {};
 
-  $scope.$on('initReady', function(other, data) {
-    console.log(data.routes);
-  });
-
   $scope.$on('zoomend', function() {
     deleteCircles();
 

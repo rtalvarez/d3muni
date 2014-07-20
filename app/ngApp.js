@@ -9,7 +9,6 @@ angular.module("d3App", ['map', 'api', 'assets'])
   var routeListUrl = APIUrls.routeList;
 
   $scope.activate = function(tag) {
-    console.log(tag);
     $scope.model.routes[tag].visible = !$scope.model.routes[tag].visible;
     if ($scope.model.routes[tag].visible) {
       $scope.$broadcast('enableRoute', $scope.model.routes[tag]);
