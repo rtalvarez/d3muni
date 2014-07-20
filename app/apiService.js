@@ -91,7 +91,6 @@ angular.module('api', [])
       locations.push([lat, lon]);
     });
 
-    console.log(locations[0]);
     return locations;
   };
 

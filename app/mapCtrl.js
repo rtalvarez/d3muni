@@ -8,45 +8,50 @@ angular.module('map', ['api', 'd3'])
     console.log(data.routes);
   });
 
-  $scope.$on('zoomed', function() {
-    console.log('zoomed!');
-    // deleteCircles();
+  $scope.$on('zoomend', function() {
+    deleteCircles();
+
+    for (var key in $scope.model.routes) {
+      var route = $scope.model.routes[key];
+      if (route.visible) {
+        showVehicles(route);
+      }
+    }
   });
+
+  var showVehicles = function(route) {
+    getLocations(route.routeTag)
+    .then(function(data) {
+      
+      var locations = parseLocations(data);
+
+      locations.forEach(function(item, index) {
+        var translated = map.latLngToLayerPoint({
+          lat: item[0],
+          lng: item[1]
+        });
+
+        locations[index][0] = translated.x;
+        locations[index][1] = translated.y;
+
+      });
+      putCircles(locations, route.routeTag, route.color);
+
+      $('.c' + route.routeTag).css({
+        'background-color' : route.color
+      });
+      
+    });
+  };
 
   $scope.$on('enableRoute', function(other, route) {
 
 
-    var showVehicles = function() {
-      getLocations(route.routeTag)
-      .then(function(data) {
-        
-        var locations = parseLocations(data);
-
-        locations.forEach(function(item, index) {
-          var translated = map.latLngToLayerPoint({
-            lat: item[0],
-            lng: item[1]
-          });
-
-          locations[index][0] = translated.x;
-          locations[index][1] = translated.y;
-
-        });
-        console.log('translated', locations[0]);
-        putCircles(locations, route.routeTag, route.color);
-
-        $('.c' + route.routeTag).css({
-          'background-color' : route.color
-        });
-        // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
-      });
-    };
-
-    showVehicles();
+    showVehicles(route);
 
     $scope.timers[route.routeTag] = setInterval(function() {
       deleteCircles(route.routeTag);
-      showVehicles();
+      showVehicles(route);
     }, 15000);
     
 
@@ -91,9 +96,11 @@ angular.module('map', ['api', 'd3'])
       }).addTo(map);
 
     window.map = map;
-    $('.leaflet-control-zoom > a').on('click', function(){
-      $rootScope.$broadcast('zoomed');
+
+    map.on('zoomend', function() {
+      $rootScope.$broadcast('zoomend');
     });
+
   };
 
   return function() {
