@@ -6,7 +6,11 @@ angular.module('map', ['api', 'd3'])
 
   $scope.$on('initReady', function(other, data) {
     console.log(data.routes);
-    
+  });
+
+  $scope.$on('zoomed', function() {
+    console.log('zoomed!');
+    // deleteCircles();
   });
 
   $scope.$on('enableRoute', function(other, route) {
@@ -18,15 +22,10 @@ angular.module('map', ['api', 'd3'])
         
         var locations = parseLocations(data);
 
-        var deltaLat = (map.getCenter().lat - map.initial[0]);
-        var deltaLng = (map.getCenter().lng - map.initial[1]);
-        // console.log('deltas', [deltaLat, deltaLng]);
-
-
         locations.forEach(function(item, index) {
           var translated = map.latLngToLayerPoint({
-            lat: item[0] + deltaLat,
-            lng: item[1] + deltaLng
+            lat: item[0],
+            lng: item[1]
           });
 
           locations[index][0] = translated.x;
@@ -34,10 +33,10 @@ angular.module('map', ['api', 'd3'])
 
         });
         console.log('translated', locations[0]);
-        var color = putCircles(locations, route.routeTag);
+        putCircles(locations, route.routeTag, route.color);
 
         $('.c' + route.routeTag).css({
-          'background-color' : color
+          'background-color' : route.color
         });
         // map.latLngToContainerPoint({lat:37.784875, lng:-122.406643})
       });
@@ -63,7 +62,7 @@ angular.module('map', ['api', 'd3'])
 }])
 
 
-.factory('makeMap', [function() {
+.factory('makeMap', ['$rootScope', function($rootScope) {
 
   var executed = false;
   var map;
@@ -92,7 +91,9 @@ angular.module('map', ['api', 'd3'])
       }).addTo(map);
 
     window.map = map;
-    // return map;
+    $('.leaflet-control-zoom > a').on('click', function(){
+      $rootScope.$broadcast('zoomed');
+    });
   };
 
   return function() {

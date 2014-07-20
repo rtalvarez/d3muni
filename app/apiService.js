@@ -48,7 +48,7 @@ angular.module('api', [])
 
 }])
 
-.factory('saveRoutes', [function() {
+.factory('saveRoutes', ['randomColor', function(randomColor) {
 
   return function(data, scope) {
     var nodes = $(data).find('route');
@@ -65,7 +65,8 @@ angular.module('api', [])
       scope.model.routes[routeTag] = {
         title: title,
         visible: false,
-        routeTag: routeTag
+        routeTag: routeTag,
+        color: randomColor()
       };
 
     });
@@ -93,6 +94,21 @@ angular.module('api', [])
     console.log(locations[0]);
     return locations;
   };
+
+}])
+
+.service('randomColor', [function() {
+
+  return function(){
+    var letters = 'ABCDEF0123456789'.split('');
+    var color = '#';
+
+    for (var i = 0; i < 6; i++){
+      color = color + letters[Math.floor(Math.random() * letters.length)];    
+    }
+
+    return color;
+ };
 
 }]);
 
