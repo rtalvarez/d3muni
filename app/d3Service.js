@@ -40,7 +40,7 @@ angular.module('d3', [])
 
   return function(data, tag) {
     var color = circleColors(tag);
-    console.log(color);
+    // console.log(color);
     d3.select('svg')
     .append('g')
     .attr('class', 'r' + tag)

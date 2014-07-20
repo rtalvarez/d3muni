@@ -17,17 +17,23 @@ angular.module('map', ['api', 'd3'])
       .then(function(data) {
         
         var locations = parseLocations(data);
+
+        var deltaLat = (map.getCenter().lat - map.initial[0]);
+        var deltaLng = (map.getCenter().lng - map.initial[1]);
+        // console.log('deltas', [deltaLat, deltaLng]);
+
+
         locations.forEach(function(item, index) {
-          var translated = map.latLngToContainerPoint({
-            lat: item[0],
-            lng: item[1]
+          var translated = map.latLngToLayerPoint({
+            lat: item[0] + deltaLat,
+            lng: item[1] + deltaLng
           });
 
           locations[index][0] = translated.x;
           locations[index][1] = translated.y;
 
         });
-        console.log(locations);
+        console.log('translated', locations[0]);
         var color = putCircles(locations, route.routeTag);
 
         $('.c' + route.routeTag).css({
@@ -65,14 +71,17 @@ angular.module('map', ['api', 'd3'])
   var createMap = function() {
 
     executed = true;
+    var center = [37.764811863655154, -122.44863510131836];
     map = L.map('map', {
-      center: [37.764811863655154, -122.44863510131836],
+      center: center,
       zoom: 13,
       touchZoom: false,
       doubleClickZoom: false,
       boxZoom: false,
       scrollWheelZoom: false
     });
+
+    map.initial = center;
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
         maxZoom: 18,
